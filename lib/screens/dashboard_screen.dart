@@ -4,6 +4,7 @@ import '../services/fishing_trip_service.dart';
 import '../theme/app_theme.dart';
 import '../utils/formatters.dart';
 import '../models/fishing_trip.dart';
+import '../widgets/charts_widget.dart';
 import 'trip_detail_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -29,7 +30,12 @@ class DashboardScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 _buildStatsGrid(service),
                 const SizedBox(height: 24),
+                CapturesBarChart(trips: service.trips),
+                const SizedBox(height: 16),
+                RevenuePieChart(trips: service.trips),
+                const SizedBox(height: 24),
                 _buildRecentTrips(context, service),
+                const SizedBox(height: 80),
               ],
             ),
           );
