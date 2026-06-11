@@ -319,33 +319,36 @@ class _TripFormScreenState extends State<TripFormScreen> {
 
   // ── Logique de soumission ────────────────────────────────
 
-  void _submit(FishingTripService service) {
-    if (!_formKey.currentState!.validate()) return;
+  void _submit(FishingTripService service) async {
+  if (!_formKey.currentState!.validate()) return;
 
-    if (_isEditing) {
-      service.updateTrip(
-        widget.trip!.copyWith(
-          pirogue: _selectedPirogue,
-          species: _selectedSpecies,
-          quantityKg: double.parse(_quantityController.text),
-          pricePerKg: int.parse(_priceController.text),
-          date: _selectedDate,
-        ),
-      );
+  if (_isEditing) {
+    await service.updateTrip(
+      widget.trip!.copyWith(
+        pirogue: _selectedPirogue,
+        species: _selectedSpecies,
+        quantityKg: double.parse(_quantityController.text),
+        pricePerKg: int.parse(_priceController.text),
+        date: _selectedDate,
+      ),
+    );
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Sortie modifiee avec succes'),
           backgroundColor: AppColors.accent,
         ),
       );
-    } else {
-      service.addTrip(
-        pirogue: _selectedPirogue!,
-        species: _selectedSpecies!,
-        quantityKg: double.parse(_quantityController.text),
-        pricePerKg: int.parse(_priceController.text),
-        date: _selectedDate,
-      );
+    }
+  } else {
+    await service.addTrip(
+      pirogue: _selectedPirogue!,
+      species: _selectedSpecies!,
+      quantityKg: double.parse(_quantityController.text),
+      pricePerKg: int.parse(_priceController.text),
+      date: _selectedDate,
+    );
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Sortie creee avec succes'),
@@ -353,7 +356,10 @@ class _TripFormScreenState extends State<TripFormScreen> {
         ),
       );
     }
-
-    Navigator.pop(context);
   }
+
+  if (mounted) Navigator.pop(context);
 }
+
+}
+

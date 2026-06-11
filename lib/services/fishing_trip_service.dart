@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 import '../models/fishing_trip.dart';
 
 class FishingTripService extends ChangeNotifier {
   final _uuid = const Uuid();
+  late Box<FishingTrip> _box;
+  bool _initialized = false;
 
-  final List<FishingTrip> _trips = [..._demoData];
-
-  // Espèces sénégalaises
   static const List<String> availableSpecies = [
     'Thiof',
     'Yaboy',
@@ -17,7 +17,6 @@ class FishingTripService extends ChangeNotifier {
     'Maquereau',
   ];
 
-  // Pirogues de démonstration
   static const List<String> availablePirogues = [
     'Aminata',
     'Fatou Diagne',
@@ -26,17 +25,40 @@ class FishingTripService extends ChangeNotifier {
     'Ndeye',
   ];
 
-  // ── Getters ──────────────────────────────────────────
+  // ── Initialisation ────────────────────────────────────
 
-  List<FishingTrip> get trips => List.unmodifiable(_trips);
+  Future<void> init() async {
+    _box = await Hive.openBox<FishingTrip>('fishing_trips');
+
+    // Insere les données demo si la box est vide
+    if (_box.isEmpty) {
+      await _insertDemoData();
+    }
+
+    _initialized = true;
+    notifyListeners();
+  }
+
+  Future<void> _insertDemoData() async {
+    for (final trip in _demoData) {
+      await _box.put(trip.id, trip);
+    }
+  }
+
+  // ── Getters ───────────────────────────────────────────
+
+  List<FishingTrip> get trips {
+    if (!_initialized) return [];
+    return _box.values.toList();
+  }
 
   double get totalRevenue =>
-      _trips.fold(0, (sum, t) => sum + t.revenue);
+      trips.fold(0, (sum, t) => sum + t.revenue);
 
   double get totalQuantity =>
-      _trips.fold(0, (sum, t) => sum + t.quantityKg);
+      trips.fold(0, (sum, t) => sum + t.quantityKg);
 
-  int get totalTrips => _trips.length;
+  int get totalTrips => trips.length;
 
   // ── Filtres ───────────────────────────────────────────
 
@@ -46,7 +68,7 @@ class FishingTripService extends ChangeNotifier {
     DateTime? date,
     String? search,
   }) {
-    return _trips.where((t) {
+    return trips.where((t) {
       if (species != null && species.isNotEmpty && t.species != species) {
         return false;
       }
@@ -72,47 +94,41 @@ class FishingTripService extends ChangeNotifier {
 
   // ── CRUD ──────────────────────────────────────────────
 
-  void addTrip({
+  Future<void> addTrip({
     required String pirogue,
     required String species,
     required double quantityKg,
     required int pricePerKg,
     required DateTime date,
-  }) {
-    _trips.add(FishingTrip(
+  }) async {
+    final trip = FishingTrip(
       id: _uuid.v4(),
       pirogue: pirogue,
       species: species,
       quantityKg: quantityKg,
       pricePerKg: pricePerKg,
       date: date,
-    ));
+    );
+    await _box.put(trip.id, trip);
     notifyListeners();
   }
 
-  void updateTrip(FishingTrip updated) {
-    final index = _trips.indexWhere((t) => t.id == updated.id);
-    if (index != -1) {
-      _trips[index] = updated;
-      notifyListeners();
-    }
+  Future<void> updateTrip(FishingTrip updated) async {
+    await _box.put(updated.id, updated);
+    notifyListeners();
   }
 
-  void deleteTrip(String id) {
-    _trips.removeWhere((t) => t.id == id);
+  Future<void> deleteTrip(String id) async {
+    await _box.delete(id);
     notifyListeners();
   }
 
   FishingTrip? getById(String id) {
-    try {
-      return _trips.firstWhere((t) => t.id == id);
-    } catch (_) {
-      return null;
-    }
+    return _box.get(id);
   }
 }
 
-// ── Données de démonstration ──────────────────────────
+// ── Données de démonstration ──────────────────────────────
 
 final _demoData = [
   FishingTrip(

@@ -1,12 +1,28 @@
-class FishingTrip {
+import 'package:hive/hive.dart';
+
+part 'fishing_trip.g.dart';
+
+@HiveType(typeId: 0)
+class FishingTrip extends HiveObject {
+  @HiveField(0)
   final String id;
+
+  @HiveField(1)
   final String pirogue;
+
+  @HiveField(2)
   final String species;
+
+  @HiveField(3)
   final double quantityKg;
+
+  @HiveField(4)
   final int pricePerKg;
+
+  @HiveField(5)
   final DateTime date;
 
-  const FishingTrip({
+  FishingTrip({
     required this.id,
     required this.pirogue,
     required this.species,
@@ -15,10 +31,8 @@ class FishingTrip {
     required this.date,
   });
 
-  /// Revenu calculé automatiquement
   double get revenue => quantityKg * pricePerKg;
 
-  /// Pour modifier une sortie existante
   FishingTrip copyWith({
     String? id,
     String? pirogue,
