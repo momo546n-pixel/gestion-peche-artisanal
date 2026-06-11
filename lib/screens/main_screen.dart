@@ -3,6 +3,7 @@ import '../theme/app_theme.dart';
 import 'dashboard_screen.dart';
 import 'trips_list_screen.dart';
 import 'trip_form_screen.dart';
+import 'about_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -17,6 +18,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = const [
     DashboardScreen(),
     TripsListScreen(),
+    AboutScreen(),
   ];
 
   @override
@@ -50,22 +52,32 @@ class _MainScreenState extends State<MainScreen> {
             ),
             label: 'Sorties',
           ),
+          NavigationDestination(
+            icon: Icon(Icons.info_outline),
+            selectedIcon: Icon(
+              Icons.info,
+              color: AppColors.primary,
+            ),
+            label: 'A propos',
+          ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => const TripFormScreen(),
-            ),
-          );
-        },
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.add),
-        label: const Text('Nouvelle sortie'),
-      ),
+      floatingActionButton: _currentIndex != 2
+          ? FloatingActionButton.extended(
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const TripFormScreen(),
+                  ),
+                );
+              },
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              icon: const Icon(Icons.add),
+              label: const Text('Nouvelle sortie'),
+            )
+          : null,
     );
   }
 }
