@@ -45,40 +45,73 @@ class DashboardScreen extends StatelessWidget {
   }
 
   Widget _buildHeader() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.primary, AppColors.secondary],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+  return Container(
+    width: double.infinity,
+    height: 160,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: AppColors.primary.withValues(alpha: 0.3),
+          blurRadius: 12,
+          offset: const Offset(0, 6),
         ),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      ],
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: Stack(
+        fit: StackFit.expand,
         children: [
-          Text(
-            'Tableau de bord',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
+          // Image de fond
+          Image.asset(
+            'assets/images/peche.jpg',
+            fit: BoxFit.cover,
+          ),
+          // Overlay
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  AppColors.primary.withValues(alpha: 0.85),
+                  AppColors.secondary.withValues(alpha: 0.6),
+                ],
+              ),
             ),
           ),
-          SizedBox(height: 4),
-          Text(
-            'Suivi des prises de peche artisanale',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
+          // Texte
+          const Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Tableau de bord',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 6),
+                Text(
+                  'Suivi des prises de peche artisanale',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildStatsGrid(FishingTripService service) {
     return GridView.count(
