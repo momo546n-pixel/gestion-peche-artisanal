@@ -15,7 +15,7 @@ class DashboardScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          ' Gestion Pêche Artisanale',
+          'Gestion Peche Artisanale',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
@@ -50,15 +50,10 @@ class DashboardScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── En-tête ──────────────────────────────
                 _buildHeader(),
                 const SizedBox(height: 20),
-
-                // ── Cartes statistiques ───────────────────
                 _buildStatsGrid(service),
                 const SizedBox(height: 24),
-
-                // ── Sorties récentes ──────────────────────
                 _buildRecentTrips(context, service),
               ],
             ),
@@ -67,8 +62,6 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
-
-  // ── En-tête ────────────────────────────────────────────
 
   Widget _buildHeader() {
     return Container(
@@ -95,7 +88,7 @@ class DashboardScreen extends StatelessWidget {
           ),
           SizedBox(height: 4),
           Text(
-            'Suivi des prises de pêche artisanale',
+            'Suivi des prises de peche artisanale',
             style: TextStyle(
               color: Colors.white70,
               fontSize: 14,
@@ -105,8 +98,6 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
-
-  // ── Grille de statistiques ─────────────────────────────
 
   Widget _buildStatsGrid(FishingTripService service) {
     return GridView.count(
@@ -137,18 +128,15 @@ class DashboardScreen extends StatelessWidget {
         ),
         _StatCard(
           icon: Icons.set_meal,
-          label: 'Espèces',
-          value: '${FishingTripService.availableSpecies.length} espèces',
+          label: 'Especes',
+          value: '${FishingTripService.availableSpecies.length} especes',
           color: const Color(0xFF7B1FA2),
         ),
       ],
     );
   }
 
-  // ── Sorties récentes ───────────────────────────────────
-
-  Widget _buildRecentTrips(
-      BuildContext context, FishingTripService service) {
+  Widget _buildRecentTrips(BuildContext context, FishingTripService service) {
     final recent = service.trips.reversed.take(3).toList();
 
     return Column(
@@ -158,7 +146,7 @@ class DashboardScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
-              'Sorties récentes',
+              'Sorties recentes',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -182,7 +170,7 @@ class DashboardScreen extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.all(32),
               child: Text(
-                'Aucune sortie enregistrée',
+                'Aucune sortie enregistree',
                 style: TextStyle(color: AppColors.textLight),
               ),
             ),
@@ -193,8 +181,6 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 }
-
-// ── Widget carte statistique ────────────────────────────
 
 class _StatCard extends StatelessWidget {
   final IconData icon;
@@ -218,7 +204,7 @@ class _StatCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -231,7 +217,7 @@ class _StatCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -260,8 +246,6 @@ class _StatCard extends StatelessWidget {
   }
 }
 
-// ── Widget carte sortie récente ─────────────────────────
-
 class _RecentTripCard extends StatelessWidget {
   final FishingTrip trip;
 
@@ -277,7 +261,7 @@ class _RecentTripCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -285,20 +269,20 @@ class _RecentTripCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Icône espèce
           Container(
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Center(
-              child: Text('', style: TextStyle(fontSize: 20)),
+            child: const Icon(
+              Icons.set_meal,
+              color: AppColors.primary,
+              size: 22,
             ),
           ),
           const SizedBox(width: 12),
-          // Infos
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,7 +295,7 @@ class _RecentTripCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${trip.pirogue} • ${AppFormatters.date(trip.date)}',
+                  '${trip.pirogue} - ${AppFormatters.date(trip.date)}',
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.textLight,
@@ -320,7 +304,6 @@ class _RecentTripCard extends StatelessWidget {
               ],
             ),
           ),
-          // Revenu
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
