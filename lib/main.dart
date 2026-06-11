@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'services/fishing_trip_service.dart';
 import 'theme/app_theme.dart';
+import 'screens/dashboard_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,14 +22,7 @@ class MyApp extends StatelessWidget {
         title: 'Gestion Pêche Artisanale',
         theme: AppTheme.light,
         debugShowCheckedModeBanner: false,
-        home: const Scaffold(
-          body: Center(
-            child: Text(
-              '🐟 Gestion Pêche Artisanale',
-              style: TextStyle(fontSize: 24),
-            ),
-          ),
-        ),
+        home: const DashboardScreen(),
       ),
     );
   }
