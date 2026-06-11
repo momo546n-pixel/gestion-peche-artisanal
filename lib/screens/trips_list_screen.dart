@@ -31,18 +31,6 @@ class _TripsListScreenState extends State<TripsListScreen> {
       appBar: AppBar(
         title: const Text('Liste des sorties'),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const TripFormScreen()),
-          );
-        },
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.add),
-        label: const Text('Nouvelle sortie'),
-      ),
       body: Consumer<FishingTripService>(
         builder: (context, service, _) {
           final filtered = service.filter(
@@ -76,7 +64,7 @@ class _TripsListScreenState extends State<TripsListScreen> {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => const TripFormScreen(),
+                                  builder: (_) => TripFormScreen(trip: trip),
                                 ),
                               );
                             },
@@ -350,10 +338,7 @@ class _TripCard extends StatelessWidget {
             const SizedBox(height: 8),
             Row(
               children: [
-                _InfoChip(
-                  label: trip.species,
-                  color: AppColors.primary,
-                ),
+                _InfoChip(label: trip.species, color: AppColors.primary),
                 const SizedBox(width: 8),
                 _InfoChip(
                   label: AppFormatters.weight(trip.quantityKg),

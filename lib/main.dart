@@ -4,7 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'services/fishing_trip_service.dart';
 import 'theme/app_theme.dart';
-import 'screens/dashboard_screen.dart';
+import 'screens/main_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
           Locale('en', 'US'),
         ],
         locale: const Locale('fr', 'FR'),
-        home: const DashboardScreen(),
+        home: const MainScreen(),
       ),
     );
   }

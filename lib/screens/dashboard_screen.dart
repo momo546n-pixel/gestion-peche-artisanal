@@ -4,8 +4,7 @@ import '../services/fishing_trip_service.dart';
 import '../theme/app_theme.dart';
 import '../utils/formatters.dart';
 import '../models/fishing_trip.dart';
-import 'trips_list_screen.dart';
-import 'trip_form_screen.dart';
+import 'trip_detail_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -18,30 +17,6 @@ class DashboardScreen extends StatelessWidget {
           'Gestion Peche Artisanale',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.list_alt),
-            tooltip: 'Liste des sorties',
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const TripsListScreen(),
-              ),
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const TripFormScreen(),
-          ),
-        ),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.add),
-        label: const Text('Nouvelle sortie'),
       ),
       body: Consumer<FishingTripService>(
         builder: (context, service, _) {
@@ -142,27 +117,13 @@ class DashboardScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Sorties recentes',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textDark,
-              ),
-            ),
-            TextButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const TripsListScreen(),
-                ),
-              ),
-              child: const Text('Voir tout'),
-            ),
-          ],
+        const Text(
+          'Sorties recentes',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textDark,
+          ),
         ),
         const SizedBox(height: 8),
         if (recent.isEmpty)
@@ -176,7 +137,17 @@ class DashboardScreen extends StatelessWidget {
             ),
           )
         else
-          ...recent.map((trip) => _RecentTripCard(trip: trip)),
+          ...recent.map(
+            (trip) => _RecentTripCard(
+              trip: trip,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => TripDetailScreen(tripId: trip.id),
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -248,54 +219,78 @@ class _StatCard extends StatelessWidget {
 
 class _RecentTripCard extends StatelessWidget {
   final FishingTrip trip;
+  final VoidCallback onTap;
 
-  const _RecentTripCard({required this.trip});
+  const _RecentTripCard({required this.trip, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
-            child: const Icon(
-              Icons.set_meal,
-              color: AppColors.primary,
-              size: 22,
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.set_meal,
+                color: AppColors.primary,
+                size: 22,
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    trip.species,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textDark,
+                    ),
+                  ),
+                  Text(
+                    '${trip.pirogue} - ${AppFormatters.date(trip.date)}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textLight,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  trip.species,
+                  AppFormatters.currency(trip.revenue),
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textDark,
+                    color: AppColors.accent,
+                    fontSize: 13,
                   ),
                 ),
                 Text(
-                  '${trip.pirogue} - ${AppFormatters.date(trip.date)}',
+                  AppFormatters.weight(trip.quantityKg),
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.textLight,
@@ -303,28 +298,8 @@ class _RecentTripCard extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                AppFormatters.currency(trip.revenue),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.accent,
-                  fontSize: 13,
-                ),
-              ),
-              Text(
-                AppFormatters.weight(trip.quantityKg),
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: AppColors.textLight,
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
